@@ -3,11 +3,6 @@ const { invoke } = window.__TAURI__.core;
 let greetInputEl;
 let greetMsgEl;
 
-async function greet() {
-    // Learn more about Tauri commands at https://tauri.app/develop/calling-rust/
-    greetMsgEl.textContent = await invoke("greet", { name: greetInputEl.value });
-}
-
 async function get_folder_list() {
     let list = "";
     const nameList = await invoke("get_folder_list", { path: "/home/redon" })
