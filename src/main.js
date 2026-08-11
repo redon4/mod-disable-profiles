@@ -1,18 +1,19 @@
 const { invoke } = window.__TAURI__.core;
 
-let greetInputEl;
-let greetMsgEl;
+async function getFolderMods(path) {
+    return await invoke("get_folder_mods", { path: path });
+}
 
-async function get_folder_list() {
+async function drawModList() {
     let list = "";
-    const nameList = await invoke("get_folder_list", { path: "/home/redon" })
-    nameList.forEach(element => {
-        list += "<li>" + element + "</li>"
+    const modList = await getFolderMods("/home/redon");
+    modList.forEach(mcMod => {
+        list += "<li>" + mcMod.name + "</li>"
     });
 
     document.querySelector("#list").innerHTML = list;
 }
 
 window.addEventListener("DOMContentLoaded", () => {
-    document.querySelector(".sel_folder").addEventListener("click", get_folder_list)
+    document.querySelector(".sel_folder").addEventListener("click", drawModList)
 });
