@@ -21,7 +21,7 @@ fn get_folder_mods(path: &str) -> Vec<FabricMod> {
         }
 
         let name = match 
-            entry.expect("error in code")
+            entry.unwrap()
             .file_name()
             .into_string() 
         {
