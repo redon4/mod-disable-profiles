@@ -24,30 +24,43 @@
 
 .mod_list {
   width: 80dvw;
-  right: 0;
   position: absolute;
 }
 
 
 .mc_mod {
-  display: flex;
-  justify-content: space-between;
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  grid-template-rows: 80px;
+  gap: 5px;
   align-items: center;
 
-  height: 80px;
 
- border: 1px solid green;
+  border: 1px solid green;
 }
 
 .mc_mod__icon {
   max-height: 100%;
 }
 
-.mc_mod__name {
-  font-size: x-large;
+.mc_mod__middle {
+  display: flex;
+  flex-flow: column nowrap;
 
 }
 
+.mc_mod__middle__name {
+  font-size: x-large;
+}
+
+.mc_mod__middle__path {
+  font-size: medium;
+}
+
 .mc_mod__toggle {
+  background: red;
+}
+
+.mc_mod__toggle.disabled {
   background: green;
 }

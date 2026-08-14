@@ -20,10 +20,10 @@ fn get_folder_mods(path: &str) -> Vec<FabricMod> {
             continue;
         }
 
-        let name = match 
+        let name = match
             entry.unwrap()
             .file_name()
-            .into_string() 
+            .into_string()
         {
             Ok(value) => value,
             Err(_e) => String::from("INVALID NAME"),
@@ -39,13 +39,18 @@ fn get_folder_mods(path: &str) -> Vec<FabricMod> {
     name_vec
 }
 
+#[tauri::command]
+fn disable_mod(_path: &str, _disabled: bool) {
+
+}
+
 /// # Panics
 /// should NEVER happen
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
         .plugin(tauri_plugin_opener::init())
-        .invoke_handler(tauri::generate_handler![get_folder_mods])
+        .invoke_handler(tauri::generate_handler![get_folder_mods, disable_mod])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }
