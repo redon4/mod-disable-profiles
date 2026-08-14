@@ -58,9 +58,9 @@
 }
 
 .mc_mod__toggle {
-  background: red;
+  background: green;
 }
 
 .mc_mod__toggle.disabled {
-  background: green;
+  background: red;
 }

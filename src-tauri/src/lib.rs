@@ -1,3 +1,4 @@
+use std::path::Path;
 // Learn more about Tauri commands at https://tauri.app/develop/calling-rust/
 
 // for js being able to read it
@@ -51,8 +52,22 @@ fn get_folder_mods(path: &str) -> Vec<FabricMod> {
 }
 
 #[tauri::command]
-fn disable_mod(_path: &str, _disabled: bool) {
+fn disable_mod(path: &str, disabled: bool) -> Result<(), String>{
+    // disabled = if it got disabled
+    let og_path = Path::new(path);
 
+    let new_path = if disabled {
+        // if it got disabled
+        og_path.with_added_extension("disabled")
+    } else if path.ends_with(".disabled") {
+        og_path.with_extension("")
+    } else {
+        og_path.to_path_buf()
+    };
+
+    // println!("({}) => {} -> {}", disabled, og_path.display(), new_path.display());
+
+    std::fs::rename(og_path, new_path).map_err(|err| err.to_string())
 }
 
 /// # Panics

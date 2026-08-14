@@ -1,5 +1,5 @@
 const { invoke } = window.__TAURI__.core;
-const { dirname } = window.__TAURI__.path.dirname;
+const { dirname } = window.__TAURI__.path;
 
 function makeModListElement(mcMod) {
     return (
@@ -17,16 +17,30 @@ function makeModListElement(mcMod) {
 
 async function drawModList(path) {
     path = "/mnt/c/Users/danie/AppData/Roaming/ModrinthApp/profiles/Fabric 26.2/mods";
-    let list = "";
+
+    const modListElement = document.querySelector(".mod_list")
+    // the list of mcMod Objects
     const modList = await invoke("get_folder_mods", {path: path });
+
+    // reset the list
+    modListElement.innerHTML = "";
+
+    // construcrt entry for every mod
     modList.forEach(mcMod => {
-        list += makeModListElement(mcMod)
+        const tempMod = document.createElement("div");
+        tempMod.innerHTML = makeModListElement(mcMod);
+
+        if ( mcMod.path.endsWith(".disabled") ) {
+            tempMod
+            .querySelector(".mc_mod__toggle")
+            .classList.add("disabled");
+        }
+
+        modListElement.appendChild(tempMod)
     });
 
-    document.querySelector(".mod_list").innerHTML = list;
     document.querySelectorAll(".mc_mod__toggle").forEach(toggleButton => {
         toggleButton.addEventListener("click", () => toggleButtonClick(toggleButton));
-        toggleButton.classList.add("disabled");
     })
 }
 
@@ -48,12 +62,11 @@ async function toggleButtonClick(button) {
     // spam proofing
     } finally {
         button.disabled = false;
-        drawModList( dirname(path) );
+        drawModList( await dirname(path) );
     }
 }
 
 window.addEventListener("DOMContentLoaded", () => {
     document.querySelector(".sel_folder").addEventListener("click", drawModList)
     drawModList()
-
 });
