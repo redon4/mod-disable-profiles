@@ -5,7 +5,7 @@
 // to store the info about the mod
 struct FabricMod {
     name: String,
-    // path: String,
+    path: String,
     // icon: String,
 }
 
@@ -16,22 +16,33 @@ fn get_folder_mods(path: &str) -> Vec<FabricMod> {
 
     let entries = std::fs::read_dir(path).unwrap();
     for entry in entries {
-        if entry.is_err() {
-            continue;
-        }
+        let entry = match entry {
+            Ok(value) => value,
+            Err(_) => continue,
+        };
 
-        let name = match
-            entry.unwrap()
+        let name: String = match
+            &entry
             .file_name()
             .into_string()
         {
-            Ok(value) => value,
+            Ok(value) => String::from(value),
             Err(_e) => String::from("INVALID NAME"),
+        };
+
+        let path = match
+            &entry
+            .path()
+            .to_str()
+        {
+            Some(value) => String::from(*value),
+            None => String::from("INVALID PATH"),
         };
 
         name_vec.push(
             FabricMod {
                     name,
+                    path,
             }
         );
     }

@@ -9,7 +9,7 @@ function makeModListElement(mcMod) {
     >
     <div class="mc_mod__middle">
         <div class="mc_mod__middle__name">${mcMod.name}</div>
-        <div class="mc_mod__middle__path">/home</div>
+        <div class="mc_mod__middle__path">${mcMod.path}</div>
     </div>
     <div class="mc_mod__toggle">toggle</div>
 </li>`)
