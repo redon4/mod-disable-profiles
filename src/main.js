@@ -18,12 +18,21 @@ function makeModListElement(mcMod) {
 async function drawModList(path) {
     path = "/mnt/c/Users/danie/AppData/Roaming/ModrinthApp/profiles/Fabric 26.2/mods";
 
-    const modListElement = document.querySelector(".mod_list")
     // the list of mcMod Objects
-    const modList = await invoke("get_folder_mods", {path: path });
+    const modListElement = document.querySelector(".mod_list")
 
     // reset the list
     modListElement.innerHTML = "";
+
+    try {
+        const modList = await invoke("get_folder_mods", {path: path });
+    } catch (error) {
+        let errorElement = document.createElement("div");
+        errorElement.innerHTML = "error with loading path";
+        modListElement.appendChild(errorElement);
+        return
+    } finally { }
+
 
     // construcrt entry for every mod
     modList.forEach(mcMod => {
