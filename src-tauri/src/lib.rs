@@ -15,9 +15,7 @@ fn get_folder_mods(path: &str) -> Result<Vec<FabricMod>, String> {
     // the vector that gets the Mods Info
     let mut name_vec: Vec<FabricMod> = Vec::new();
 
-    let entries = std::fs::read_dir(path)
-        .map_err( |err| err.to_string() )
-        ?;
+    let entries = std::fs::read_dir(path).map_err(|err| err.to_string())?;
     for entry in entries {
         // let entry = match entry {
         //     Ok(value) => value,
@@ -26,37 +24,32 @@ fn get_folder_mods(path: &str) -> Result<Vec<FabricMod>, String> {
         // Compiler said this is better:
         let Ok(entry) = entry else { continue };
 
-        let name: String = match
+        let name: String = match 
             &entry
             .file_name()
-            .into_string()
+            .into_string() 
         {
             Ok(value) => String::from(value),
             Err(_e) => String::from("INVALID NAME"),
         };
 
-        let path = match
+        let path = match 
             &entry
             .path()
-            .to_str()
+            .to_str() 
         {
             Some(value) => String::from(*value),
             None => String::from("INVALID PATH"),
         };
 
-        name_vec.push(
-            FabricMod {
-                    name,
-                    path,
-            }
-        );
+        name_vec.push(FabricMod { name, path });
     }
 
     Ok(name_vec)
 }
 
 #[tauri::command]
-fn disable_mod(path: &str, disabled: bool) -> Result<(), String>{
+fn disable_mod(path: &str, disabled: bool) -> Result<(), String> {
     // disabled = if it got disabled
     let og_path = Path::new(path);
 
@@ -79,6 +72,7 @@ fn disable_mod(path: &str, disabled: bool) -> Result<(), String>{
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
+        .plugin(tauri_plugin_dialog::init())
         .plugin(tauri_plugin_opener::init())
         .invoke_handler(tauri::generate_handler![get_folder_mods, disable_mod])
         .run(tauri::generate_context!())

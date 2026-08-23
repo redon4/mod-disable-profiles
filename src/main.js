@@ -1,5 +1,6 @@
 const { invoke } = window.__TAURI__.core;
 const { dirname } = window.__TAURI__.path;
+const { open } = window.__TAURI__.dialog;
 
 function makeModListElement(mcMod) {
     return (
@@ -16,23 +17,32 @@ function makeModListElement(mcMod) {
 }
 
 async function drawModList(path) {
-    path = "/mnt/c/Users/danie/AppData/Roaming/ModrinthApp/profiles/Fabric 26.2/mods";
-
     // the list of mcMod Objects
-    const modListElement = document.querySelector(".mod_list")
+    const modListElement = document.querySelector(".mod_list");
+    let modList;
 
     // reset the list
     modListElement.innerHTML = "";
 
     try {
-        const modList = await invoke("get_folder_mods", {path: path });
+        console.log("Calling get_folder_mods with path:", path);
+        modList = await invoke("get_folder_mods", {path: path });
+        console.log("Received modList:", modList); 
     } catch (error) {
+        console.log("Error: ", error);
         let errorElement = document.createElement("div");
-        errorElement.innerHTML = "error with loading path";
+        errorElement.innerHTML = "path error: " + error;
         modListElement.appendChild(errorElement);
         return
-    } finally { }
+    } 
 
+    if (!modList || modList.length === 0) {
+        console.log("Modlist empty!")
+        let errorElement = document.createElement("div");
+        errorElement.innerHTML = "Thats an empty folder!";
+        modListElement.appendChild(errorElement);
+        return
+    }
 
     // construcrt entry for every mod
     modList.forEach(mcMod => {
@@ -76,6 +86,8 @@ async function toggleButtonClick(button) {
 }
 
 window.addEventListener("DOMContentLoaded", () => {
-    document.querySelector(".sel_folder").addEventListener("click", drawModList)
-    drawModList()
+    document.querySelector(".sel_folder").addEventListener("click", async () => {
+        const folder = await open({ multiple: false, directory: true, });
+        drawModList(folder);
+    });
 });
