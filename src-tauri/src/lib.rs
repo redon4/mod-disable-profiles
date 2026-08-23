@@ -13,7 +13,7 @@ struct FabricMod {
 #[tauri::command]
 fn get_folder_mods(path: &str) -> Result<Vec<FabricMod>, String> {
     // the vector that gets the Mods Info
-    let mut name_vec: Vec<FabricMod> = Vec::new();
+    let mut mod_vec: Vec<FabricMod> = Vec::new();
 
     let entries = std::fs::read_dir(path).map_err(|err| err.to_string())?;
     for entry in entries {
@@ -24,28 +24,30 @@ fn get_folder_mods(path: &str) -> Result<Vec<FabricMod>, String> {
         // Compiler said this is better:
         let Ok(entry) = entry else { continue };
 
-        let name: String = match 
+        let name: String = match
             &entry
             .file_name()
-            .into_string() 
+            .into_string()
         {
             Ok(value) => String::from(value),
             Err(_e) => String::from("INVALID NAME"),
         };
 
-        let path = match 
+        let path = match
             &entry
             .path()
-            .to_str() 
+            .to_str()
         {
             Some(value) => String::from(*value),
             None => String::from("INVALID PATH"),
         };
 
-        name_vec.push(FabricMod { name, path });
+        mod_vec.push(FabricMod { name, path });
     }
 
-    Ok(name_vec)
+    mod_vec.sort_by(|a, b| a.name.cmp(&b.name));
+
+    Ok(mod_vec)
 }
 
 #[tauri::command]
